@@ -1,2 +1,1 @@
-# chatbot-test
-chatbot test project
+# ChatBot
