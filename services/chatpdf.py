@@ -31,23 +31,28 @@ async def feed_data(file_path: str) -> str:
     return text_summarize()
 
 
-async def pdf_chat(req: FileChatReq):
+def initialize_qa_instance():
     # load embedding from db
     embeddings = OpenAIEmbeddings()
     docsearch = Chroma(persist_directory=DB_NAME, embedding_function=embeddings)
     # create LLM
     llm = OpenAI(temperature=0, verbose=True, max_tokens=1000)
     # create a retrievers to QA
-    qa = RetrievalQA.from_chain_type(
+    return RetrievalQA.from_chain_type(
         llm=llm, chain_type="stuff", retriever=docsearch.as_retriever()
     )
-    result = qa.run(req.message)
 
+
+qa_instance = initialize_qa_instance()
+
+
+async def pdf_chat(req: FileChatReq):
+    result = qa_instance.run(req.message)
     # to use long context chat, see: https://python.langchain.com/docs/modules/data_connection/retrievers/long_context_reorder
     return {"response": result}
 
 
-async def text_summarize(docs):
+def init_summarize_instance():
     # Define prompt
     prompt_template = """Write a concise summary of the following:
     "{text}"
@@ -59,7 +64,11 @@ async def text_summarize(docs):
     llm_chain = LLMChain(llm=llm, prompt=prompt)
 
     # Define StuffDocumentsChain
-    stuff_chain = StuffDocumentsChain(
-        llm_chain=llm_chain, document_variable_name="text"
-    )
-    return stuff_chain.run(docs)
+    return StuffDocumentsChain(llm_chain=llm_chain, document_variable_name="text")
+
+
+summarize_instance = init_summarize_instance()
+
+
+async def text_summarize(docs):
+    return summarize_instance.run(docs)
