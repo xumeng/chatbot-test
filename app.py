@@ -3,6 +3,7 @@ from fastapi import FastAPI, Depends
 
 from config.config import initiate_database
 from routes.messages import router as MessagesRouter
+from routes.chatpdf import router as ChatPDFRouter
 
 app = FastAPI()
 
@@ -18,3 +19,5 @@ async def ping():
 
 
 app.include_router(MessagesRouter, tags=["聊天"])
+
+app.include_router(ChatPDFRouter, tags=["ChatPDF"])

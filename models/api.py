@@ -29,3 +29,7 @@ class Response(BaseModel):
                 "data": "Sample data",
             }
         }
+
+
+class FileChatReq(BaseModel):
+    message: str

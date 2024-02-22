@@ -39,3 +39,10 @@ pandas
 scikit-learn
 transformers
 loguru
+langchain
+langchain-core
+langchain-community
+langchainhub
+langchain-openai
+chromadb
+bs4
